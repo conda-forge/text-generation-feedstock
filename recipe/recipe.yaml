@@ -1,0 +1,51 @@
+schema_version: 1
+
+context:
+  name: text-generation
+  version: 0.7.0
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/text_generation-${{ version }}.tar.gz
+  sha256: 689200cd1f0d4141562af2515393c2c21cdbd9fac21c8398bf3043cdcc14184e
+
+build:
+  number: 2
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - poetry-core >=1.0.0
+    - pip
+  run:
+    - python >=${{ python_min }},<4.0.0
+    - pydantic >2,<3
+    - aiohttp >=3.8.0,<4.0.0
+    - huggingface_hub >=0.12,<1.0
+
+tests:
+  - python:
+      imports:
+        - text_generation
+      python_version: ${{ python_min }}.*
+  - requirements:
+      run:
+        - pip
+        - python ${{ python_min }}.*
+    script:
+      - pip check
+
+about:
+  summary: Hugging Face Text Generation Python Client
+  license: Apache-2.0
+  license_file: LICENSE
+  homepage: https://github.com/huggingface/text-generation-inference
+
+extra:
+  recipe-maintainers:
+    - jan-janssen
